@@ -6,14 +6,50 @@ open Verso Genre Blog Site Syntax
 def courseSite : Site := site Blog.FrontPage /
   "about" Blog.About
   "notes" Blog.Notes with
-    Blog.Posts.GettingStarted
     Blog.Posts.Background
+    Blog.Posts.GettingStarted
+    Blog.Posts.CodingAgents
+    Blog.Posts.Plos
+    Blog.Posts.Warmup
+    Blog.Posts.ReadingLean
+    Blog.Posts.ProgrammingProving
+    Blog.Posts.Specifications
+    Blog.Posts.OperationalSemantics
+    Blog.Posts.Invariants
+    Blog.Posts.AuditingProofs
+    Blog.Posts.ExecutableSpecification
+    Blog.Posts.RepresentationInvariants
+    Blog.Posts.Refinement
+    Blog.Posts.TestingProofs
+    Blog.Posts.FiniteArithmetic
+    Blog.Posts.MachineExecution
+    Blog.Posts.MachineRoutines
+    Blog.Posts.FrameProperties
+    Blog.Posts.ComposingProofs
+    Blog.Posts.ProcessesProtection
+    Blog.Posts.MessagePassing
+    Blog.Posts.ChoiceCancellation
+    Blog.Posts.Scheduling
+    Blog.Posts.Capabilities
+    Blog.Posts.Allocation
+    Blog.Posts.ContextSwitching
+    Blog.Posts.Isolation
+    Blog.Posts.ComponentReplacement
+    Blog.Posts.SafetyProgress
+    Blog.Posts.Nondeterminism
+    Blog.Posts.Failures
+    Blog.Posts.ModelsHardware
+    Blog.Posts.MaintainingProofs
     Blog.Posts.Welcome
 
 def courseTheme : Theme :=
   { Theme.default with
     primaryTemplate := do
-      let page ← Theme.Default.primary
+      -- The notes page supplies its own grouped reading order.
+      let page ← withReader (fun ctx =>
+        if ctx.path.toList == ["notes"] then
+          { ctx with params := ctx.params.erase "posts" }
+        else ctx) Theme.Default.primary
       let navigation ← Theme.topNav (some "Home")
       pure <| page.visitM (m := Id) (tag := fun tag attrs _ =>
         pure <| if tag == "div" &&

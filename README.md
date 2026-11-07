@@ -24,12 +24,15 @@ Home is available in the top navigation on every page.
 
 - `Blog/FrontPage.lean` is the landing page.
 - `Blog/About.lean` introduces the course and its repositories.
-- `Blog/Notes.lean` is the notes index.
+- `Blog/Notes.lean` is the grouped table of contents, in suggested reading order.
 - `Blog/Posts/` contains individual notes and updates.
+- `Blog/Examples/` contains checked teaching implementations and proofs imported by the posts.
 - `BlogMain.lean` defines routes, the navigation theme, and the HTML generator.
 
 To add a post, create a file under `Blog/Posts/` following `Welcome.lean`, import it in
 `Blog/Notes.lean`, and add it to the `"notes"` section of `courseSite` in `BlogMain.lean`.
+Add a link in the appropriate group of the table of contents in `Blog/Notes.lean`.
+Mark planned posts as stubs until their content is written.
 Give each post a title, author, and date. Verso uses Markdown-like syntax inside
 `#doc (Page)` and `#doc (Post)` documents. See the
 [Verso manual](https://verso.lean-lang.org/doc/latest/) for authoring details.
