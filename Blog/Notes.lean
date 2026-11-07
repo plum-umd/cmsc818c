@@ -1,5 +1,7 @@
 import VersoBlog
 import Blog.Posts.Welcome
+import Blog.Posts.Background
+import Blog.Posts.GettingStarted
 
 open Verso Genre Blog
 
