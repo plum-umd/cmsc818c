@@ -27,13 +27,13 @@ jobs:
           lint: false
           use-mathlib-cache: false
       - name: Generate HTML
-        run: lake exe generate-book --depth 2
+        run: lake exe generate-blog
       - name: Check site entry point
-        run: test -f _out/html-multi/index.html
+        run: test -f _site/index.html
       - name: Upload site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: _out/html-multi
+          path: _site
 
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

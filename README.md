@@ -10,27 +10,35 @@ Install [elan](https://github.com/leanprover/elan#installation), then run:
 
 ```sh
 lake build
-lake exe generate-book --depth 2
-python3 -m http.server 8000 --directory _out/html-multi
+lake exe generate-blog
+python3 -m http.server 8001 --bind 127.0.0.1 --directory _site
 ```
 
-Open <http://localhost:8000>. The first build downloads the pinned Lean toolchain and
+Open <http://localhost:8001>. The first build downloads the pinned Lean toolchain and
 Verso dependencies and may take several minutes. Generated files are ignored by Git.
 
 ## Writing notes
 
-- `Book.lean` is the landing page and chapter list.
-- `Book/Introduction.lean` introduces the course and its repositories.
-- `Book/Notes.lean` is the starting point for course notes.
-- `Main.lean` runs Verso's HTML generator.
+The site uses Verso's blog genre, with a home page, an about page, and dated course notes.
+Home is available in the top navigation on every page.
 
-To add a chapter, create a file under `Book/` following an existing chapter, import it in
-`Book.lean`, and add `{include 1 Book.YourChapter}` at the desired position. Verso uses
-Markdown-like syntax inside `#doc (Manual)` documents. See the
+- `Blog/FrontPage.lean` is the landing page.
+- `Blog/About.lean` introduces the course and its repositories.
+- `Blog/Notes.lean` is the notes index.
+- `Blog/Posts/` contains individual notes and updates.
+- `BlogMain.lean` defines routes, the navigation theme, and the HTML generator.
+
+To add a post, create a file under `Blog/Posts/` following `Welcome.lean`, import it in
+`Blog/Notes.lean`, and add it to the `"notes"` section of `courseSite` in `BlogMain.lean`.
+Give each post a title, author, and date. Verso uses Markdown-like syntax inside
+`#doc (Page)` and `#doc (Post)` documents. See the
 [Verso manual](https://verso.lean-lang.org/doc/latest/) for authoring details.
 
-When the main artifact repository is available, add its link to `Book.lean` and
-`Book/Introduction.lean`. It is deliberately not a build dependency of this website.
+After editing, rerun `lake exe generate-blog` and refresh the browser. No commit or push is
+needed for local previews.
+
+When the main artifact repository is available, add its link to `Blog/FrontPage.lean` and
+`Blog/About.lean`. It is deliberately not a build dependency of this website.
 
 ## GitHub Pages
 
