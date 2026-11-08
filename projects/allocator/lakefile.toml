@@ -1,0 +1,12 @@
+name = "course-allocator"
+version = "0.1.0"
+defaultTargets = ["Allocator", "Checks"]
+
+[leanOptions]
+autoImplicit = false
+
+[[lean_lib]]
+name = "Allocator"
+
+[[lean_lib]]
+name = "Checks"

@@ -1,0 +1,28 @@
+name: Check teaching projects
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  allocator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build allocator and regression checks
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: projects/allocator
+          auto-config: false
+          build: true
+          test: false
+          lint: false
+          use-mathlib-cache: false
+      - name: Report supplied theorem assumptions
+        working-directory: projects/allocator
+        run: lake env lean Audit.lean

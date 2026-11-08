@@ -2,7 +2,15 @@
 
 Course website and notes for CMSC 818C, written with [Verso](https://github.com/leanprover/verso).
 The main course artifact will live in a separate repository; this repository contains the
-website and explanatory material.
+website, explanatory material, and self-contained preliminary teaching projects.
+
+## Teaching projects
+
+See [projects/](projects/README.md) for the project roadmap and the
+[allocator project](projects/allocator/README.md) for the first executable model and proof exercises.
+Each project has an independent Lake package and toolchain. Build projects from their own
+directories; website builds do not build the projects. The teaching-project workflow checks
+them separately in CI.
 
 ## Build and preview
 
