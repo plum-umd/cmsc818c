@@ -13,6 +13,26 @@ name = "Blog"
 name = "Allocator"
 srcDir = "projects/allocator"
 
+[[lean_lib]]
+name = "Queue"
+srcDir = "projects/queue"
+
+[[lean_lib]]
+name = "MiniRisc"
+srcDir = "projects/machine"
+
+[[lean_lib]]
+name = "TinyCompiler"
+srcDir = "projects/compiler"
+
+[[lean_lib]]
+name = "ProtectedMemory"
+srcDir = "projects/protection"
+
+[[lean_lib]]
+name = "CooperativeKernel"
+srcDir = "projects/scheduler"
+
 [[lean_exe]]
 name = "generate-blog"
 root = "BlogMain"

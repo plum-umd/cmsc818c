@@ -115,7 +115,7 @@ new backing bytes. The allocator must carve every returned block out of the supp
 # Basic.lean: State and the Allocation Contract
 
 `Allocator/Basic.lean` imports the memory vocabulary, then adds allocator state, initialization,
-replies, the executable allocation function, and a relation specifying permitted steps.
+replies, a specification of permitted steps, and an executable allocation function.
 
 ## The Heap Records the Allocation Frontier
 
@@ -194,10 +194,41 @@ An inductive type describes alternatives. A `Reply` either contains an allocated
 or an `Error` explaining the failure. Clients distinguish these cases by pattern matching.
 This keeps an error separate from every successful address, including address zero.
 
+## Specifying an Allocation
+
+The allocator's specification is a relation: `Step heap request reply next` states that a
+particular reply and next state are permitted for a request. Requests are 64-bit unsigned
+words interpreted as byte counts. We define the permitted behavior before considering a
+function that computes an allocation:
+
+```anchor allocationStep (module := Allocator.Basic)
+inductive Step (heap : Heap) (request : Word) : Reply → Heap → Prop where
+  | zero (empty : request.toNat = 0) : Step heap request (.error .zeroSize) heap
+  | unaligned (positive : request.toNat ≠ 0) (bad : request.toNat % wordBytes ≠ 0) :
+      Step heap request (.error .unalignedSize) heap
+  | full (positive : request.toNat ≠ 0) (aligned : request.toNat % wordBytes = 0)
+      (full : heap.memory.finish < heap.next + request.toNat) :
+      Step heap request (.error .outOfMemory) heap
+  | success (positive : request.toNat ≠ 0) (aligned : request.toNat % wordBytes = 0)
+      (room : heap.next + request.toNat ≤ heap.memory.finish) :
+      Step heap request (.allocated ⟨BitVec.ofNat 64 heap.next, request.toNat⟩)
+        { heap with next := heap.next + request.toNat }
+```
+
+Each constructor is a rule. Its named arguments are the premises needed to justify the
+conclusion after the colon. For example, `success` requires a nonzero, aligned request that
+fits in the remaining storage. The rule then fixes the returned block and the updated cursor.
+The error rules specify the priority of failures: a zero request is rejected first, then
+an unaligned request, then a request that does not fit. Each error returns the original heap.
+These requirements belong to the specification; an implementation must respect them.
+
+The relation describes the allowed behavior without calling an allocation function. We can
+use it to judge different implementations of the same interface.
+
 ## Executing an Allocation
 
-`allocate heap request` returns a reply *and* the next heap. Requests are
-64-bit unsigned words interpreted as byte counts. The cases, in priority order:
+We now implement the specification with `allocate heap request`, a function that computes
+a reply *and* the next heap. Its branches are intended to realize the cases specified by `Step`:
 
 1. A zero request returns `zeroSize`.
 2. A size not divisible by eight returns `unalignedSize`.
@@ -237,34 +268,13 @@ below that limit: proving that fact is necessary before treating `BitVec.ofNat`
 as an exact pointer conversion. Bounds arithmetic uses `Nat` to check for
 overflow instead of allowing machine addition to wrap silently.
 
-## Describing a Step Independently
-
-The function computes a result. `Step heap request reply next` instead states that a
-particular reply and next state are permitted for a request:
-
-```anchor allocationStep (module := Allocator.Basic)
-inductive Step (heap : Heap) (request : Word) : Reply → Heap → Prop where
-  | zero (empty : request.toNat = 0) : Step heap request (.error .zeroSize) heap
-  | unaligned (positive : request.toNat ≠ 0) (bad : request.toNat % wordBytes ≠ 0) :
-      Step heap request (.error .unalignedSize) heap
-  | full (positive : request.toNat ≠ 0) (aligned : request.toNat % wordBytes = 0)
-      (full : heap.memory.finish < heap.next + request.toNat) :
-      Step heap request (.error .outOfMemory) heap
-  | success (positive : request.toNat ≠ 0) (aligned : request.toNat % wordBytes = 0)
-      (room : heap.next + request.toNat ≤ heap.memory.finish) :
-      Step heap request (.allocated ⟨BitVec.ofNat 64 heap.next, request.toNat⟩)
-        { heap with next := heap.next + request.toNat }
-```
-
-Each constructor is a rule. Its named arguments are the premises needed to justify the
-conclusion after the colon. For example, `success` requires a nonzero, aligned request that
-fits in the remaining storage. The rule then fixes the returned block and the updated cursor.
-The error rules also state which conditions must hold, preserving the function's error priority.
-
-The relation contains no call to `allocate`. Proving soundness connects the function's
-computed result to these rules; proving completeness establishes that every permitted result
-is the one the function computes. Separately, invariant preservation explains why a valid
-input leads to a valid next heap. These are different obligations.
+Our correctness goal is to show that this implementation agrees with the specification.
+Soundness says that, for a valid input heap, the function's computed result satisfies `Step`.
+Completeness says that every result permitted by `Step` is the result the function computes.
+Together they establish equivalence between the specification and the executable result.
+We will explore two ways to establish validity preservation: reason directly about the
+function, or prove that the specification preserves validity and transfer that guarantee
+to a sound implementation.
 
 The module ends with two supplied proofs: `init_valid` establishes validity after initialization,
 and `allocate_memory` establishes that allocation preserves the backing memory. The latter
@@ -324,29 +334,122 @@ def Preservation : Prop :=
 ```
 
 This definition states the obligation; it does not prove preservation. Your task is to
-construct a proof of this proposition and the other obligations below.
+prove it first by examining the branches of `allocate`, without using `Step` or a theorem
+relating the function to `Step`.
+
+Then establish the corresponding property of the specification itself:
+
+```anchor stepPreservation (module := Allocator.Exercises)
+def StepPreservation : Prop :=
+  ∀ (heap : Heap) (request : Word) (reply : Reply) (next : Heap),
+    heap.Valid → Step heap request reply next → next.Valid
+```
+
+Here the proof proceeds by cases on the derivation of `Step`. Error rules leave the heap
+unchanged. The success rule supplies alignment and room premises from which the next state's
+validity must follow. This proof should reason about the specification without unfolding
+`allocate` or using an equivalence theorem.
+
+The connection between specification and implementation can be stated as an equivalence:
+
+```anchor equivalence (module := Allocator.Exercises)
+def Equivalence : Prop :=
+  ∀ (heap : Heap) (request : Word) (reply : Reply) (next : Heap), heap.Valid →
+    (Step heap request reply next ↔ allocate heap request = (reply, next))
+```
+
+Once soundness and specification preservation are available, preservation for the function
+should follow without inspecting its implementation again:
+
+```anchor preservationViaSpec (module := Allocator.Exercises)
+def PreservationViaSpec : Prop :=
+  Soundness → StepPreservation → Preservation
+```
+
+Prove this implication using only the two hypotheses and the definitions of the three
+propositions. Then apply it to your soundness and specification-preservation theorems to
+obtain a second proof of `Preservation`. Soundness suffices for this transfer: every computed
+result is a permitted step, and every permitted step from a valid heap preserves validity.
+Completeness establishes that the function realizes *all* permitted behavior; it is not
+needed to conclude that the behavior it actually computes is safe.
+
+Compare the dependencies of your two preservation proofs. The direct proof follows the
+implementation's branches; the specification-based proof separates the safety argument
+from the implementation's conformance argument. This separation becomes useful when an
+implementation changes but the specification stays fixed.
+
+## Preservation Alone Does Not Specify an Allocator
+
+Consider an implementation that refuses every request and leaves the heap unchanged:
+
+```lean allocator
+def refuseAllocation (heap : Heap) (_request : Word) : Reply × Heap :=
+  (.error .outOfMemory, heap)
+
+example (heap : Heap) (request : Word) (valid : heap.Valid) :
+    (refuseAllocation heap request).2.Valid := by
+  exact valid
+```
+
+This function preserves validity perfectly. It also preserves every byte and every previously
+allocated block. Yet it never allocates anything, even when a valid request fits. Those safety
+properties alone do not establish that it implements an allocator.
+
+Soundness with respect to `Step` rules out this behavior. For example, our initial heap has
+room for an eight-byte request, so the specification does not permit an out-of-memory reply:
+
+```lean allocator
+example : ¬ Step initialHeap 8
+    (refuseAllocation initialHeap 8).1 (refuseAllocation initialHeap 8).2 := by
+  change ¬ Step initialHeap 8 (.error .outOfMemory) initialHeap
+  intro step
+  cases step with
+  | full _ _ exhausted =>
+    have room : initialHeap.next + (8 : Word).toNat ≤ initialHeap.memory.finish := by decide
+    omega
+```
+
+Validity preservation constrains the next state. Soundness constrains the *whole transition*:
+the returned block or error, its relationship to the request, and the next heap. Because this
+specification requires success whenever a positive, aligned request fits, an implementation
+cannot satisfy soundness by simply refusing to work. Together with `StepPreservation`,
+soundness implies validity preservation; the counterexample shows that the converse fails.
+
+This distinction depends on what the specification permits. If we added a rule allowing an
+arbitrary request to fail without changing state, refusing every request could be sound for
+that weaker specification. Mechanical checking establishes conformance to the stated contract;
+we must still ensure that the contract requires the useful behavior we intend.
+
+## Proof Tasks
 
 1. *Read the model.* Explain what each invariant conjunct rules out. Predict
    the checks before executing them. Explain why returning the empty block for
    every request would fail the success contract.
-2. *Connect function and relation.* Prove `Exercises.Soundness` and
-   `Exercises.Completeness`. Derive determinism of `Step`. The relation fixes
-   error priority as well as success behavior.
-3. *Establish safety.* Prove `Exercises.Preservation`,
-   `Exercises.FailureAtomicity`, and `Exercises.SuccessContract`. In particular,
+2. *Prove preservation directly.* Prove `Exercises.Preservation` from the definition
+   of `allocate`, without relating it to `Step`.
+3. *Establish safety of the specification.* Prove `Exercises.StepPreservation` by
+   cases on `Step`, without referring to `allocate`.
+4. *Connect function and relation.* Prove `Exercises.Soundness` and
+   `Exercises.Completeness`, then derive `Exercises.Equivalence` and determinism of `Step`.
+   Prove `Exercises.PreservationViaSpec` and use it to obtain a second preservation proof.
+   Explain why completeness is unnecessary for the preservation transfer, and why an allocator
+   that always refuses requests can preserve validity without satisfying soundness.
+5. *Establish the remaining contracts.* Prove `Exercises.FailureAtomicity` and
+   `Exercises.SuccessContract`. In particular,
    establish alignment, positive size, exact pointer conversion, containment,
    and cursor advancement. Do not assume these conclusions as hypotheses.
-4. *Compose calls.* Prove `Exercises.Freshness` and
+6. *Compose calls.* Prove `Exercises.Freshness` and
    `Exercises.ConsecutiveDisjointness`. Generalize to a trace with a history of
    returned blocks: all successful allocations are pairwise disjoint, errors
    leave the history unchanged, and old blocks stay within the backing interval.
-5. *Review the frame.* Read the supplied `allocate_memory` proof and explain
+7. *Review the frame.* Read the supplied `allocate_memory` proof and explain
    why it implies preservation of previously allocated contents. State what
    additional proof would be needed for an allocator that clears new blocks.
-6. *Replace the implementation.* Implement a second version that compares the
+8. *Replace the implementation.* Implement a second version that compares the
    request against remaining capacity, `memory.finish - next`, before advancing
    the cursor. Prove agreement with the reference on valid heaps and transfer
-   the contracts. Explain why the validity precondition matters when subtraction
+   the contracts. Identify which parts of the specification-based safety argument
+   can be reused. Explain why the validity precondition matters when subtraction
    on natural numbers truncates at zero.
 
 Create `Allocator/Solution.lean`, import `Allocator.Exercises`, and write proofs

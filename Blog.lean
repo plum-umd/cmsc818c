@@ -3,3 +3,8 @@ import Blog.About
 import Blog.Notes
 import Blog.Projects
 import Blog.Projects.Allocator
+import Blog.Projects.Queue
+import Blog.Projects.Machine
+import Blog.Projects.Compiler
+import Blog.Projects.Protection
+import Blog.Projects.Scheduler

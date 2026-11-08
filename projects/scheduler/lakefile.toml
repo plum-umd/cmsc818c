@@ -1,0 +1,17 @@
+name = "course-scheduler"
+version = "0.1.0"
+defaultTargets = ["CooperativeKernel", "Checks"]
+
+[[require]]
+name = "course-machine"
+path = "../machine"
+
+[[require]]
+name = "course-protection"
+path = "../protection"
+
+[[lean_lib]]
+name = "CooperativeKernel"
+
+[[lean_lib]]
+name = "Checks"

@@ -1,0 +1,13 @@
+name = "course-compiler"
+version = "0.1.0"
+defaultTargets = ["TinyCompiler", "Checks"]
+
+[[require]]
+name = "course-machine"
+path = "../machine"
+
+[[lean_lib]]
+name = "TinyCompiler"
+
+[[lean_lib]]
+name = "Checks"

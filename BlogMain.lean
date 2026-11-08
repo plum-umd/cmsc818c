@@ -7,6 +7,11 @@ def courseSite : Site := site Blog.FrontPage /
   "about" Blog.About
   "projects" Blog.Projects /
     "allocator" Blog.Projects.Allocator
+    "queue" Blog.Projects.Queue
+    "machine" Blog.Projects.Machine
+    "compiler" Blog.Projects.Compiler
+    "protection" Blog.Projects.Protection
+    "scheduler" Blog.Projects.Scheduler
   "notes" Blog.Notes with
     Blog.Posts.Background
     Blog.Posts.GettingStarted

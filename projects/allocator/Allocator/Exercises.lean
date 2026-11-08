@@ -18,6 +18,23 @@ def Preservation : Prop :=
   ∀ (heap : Heap) (request : Word), heap.Valid → (allocate heap request).2.Valid
 -- ANCHOR_END: preservation
 
+-- ANCHOR: stepPreservation
+def StepPreservation : Prop :=
+  ∀ (heap : Heap) (request : Word) (reply : Reply) (next : Heap),
+    heap.Valid → Step heap request reply next → next.Valid
+-- ANCHOR_END: stepPreservation
+
+-- ANCHOR: equivalence
+def Equivalence : Prop :=
+  ∀ (heap : Heap) (request : Word) (reply : Reply) (next : Heap), heap.Valid →
+    (Step heap request reply next ↔ allocate heap request = (reply, next))
+-- ANCHOR_END: equivalence
+
+-- ANCHOR: preservationViaSpec
+def PreservationViaSpec : Prop :=
+  Soundness → StepPreservation → Preservation
+-- ANCHOR_END: preservationViaSpec
+
 def FailureAtomicity : Prop :=
   ∀ (heap : Heap) (request : Word) (reason : Error) (next : Heap),
     allocate heap request = (.error reason, next) → next = heap

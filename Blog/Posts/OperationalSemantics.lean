@@ -33,7 +33,7 @@ has no derivation.
 
 # Rules as Lean Constructors
 
-The shared model in `Blog/Examples/Queue.lean` represents commands and replies with inductive
+The shared model in `projects/queue/Queue/Model.lean` represents commands and replies with inductive
 types and the rules with an inductive proposition. Its constructors are `Step.push`,
 `Step.full`, `Step.pop`, and `Step.empty`. For example:
 

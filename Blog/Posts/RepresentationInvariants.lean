@@ -14,7 +14,8 @@ The list reference model makes FIFO behavior easy to describe. A circular buffer
 storage bounded and avoids shifting elements after every pop. To connect them, we need a
 precise account of what a buffer state means.
 
-The implementation and proofs in this post are checked by Lean. They live in
+The implementation and proofs in this post are checked by Lean. The implementation lives in
+`projects/queue/Queue/Buffer.lean`, and the worked proofs live in
 `Blog/Examples/CircularBuffer.lean`; concrete regression examples live in
 `Blog/Examples/CircularBufferChecks.lean`. To try the examples in this website's Lean project,
 import `Blog.Examples.CircularBufferChecks` at the top of your file.

@@ -1,0 +1,9 @@
+name = "course-protection"
+version = "0.1.0"
+defaultTargets = ["ProtectedMemory", "Checks"]
+
+[[lean_lib]]
+name = "ProtectedMemory"
+
+[[lean_lib]]
+name = "Checks"

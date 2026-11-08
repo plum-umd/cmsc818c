@@ -10,19 +10,23 @@ permissions:
   contents: read
 
 jobs:
-  allocator:
+  project:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [allocator, queue, machine, compiler, protection, scheduler]
     steps:
       - uses: actions/checkout@v6
-      - name: Build allocator and regression checks
+      - name: Build project and regression checks
         uses: leanprover/lean-action@v1
         with:
-          lake-package-directory: projects/allocator
+          lake-package-directory: projects/${{ matrix.project }}
           auto-config: false
           build: true
           test: false
           lint: false
           use-mathlib-cache: false
       - name: Report supplied theorem assumptions
-        working-directory: projects/allocator
+        working-directory: projects/${{ matrix.project }}
         run: lake env lean Audit.lean

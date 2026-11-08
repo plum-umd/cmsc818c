@@ -1,0 +1,12 @@
+{"version": "1.1.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"type": "path",
+   "scope": "",
+   "name": "«course-machine»",
+   "manifestFile": "lake-manifest.json",
+   "inherited": false,
+   "dir": "../machine",
+   "configFile": "lakefile.toml"}],
+ "name": "«course-compiler»",
+ "lakeDir": ".lake"}
