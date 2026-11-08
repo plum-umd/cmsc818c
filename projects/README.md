@@ -3,11 +3,13 @@
 These projects explore core ideas on small systems before applying them to PL/OS.
 They live in the course repository for now. Each project is an independent Lake
 package: build it from its own directory, without building the website or cloning
-`plos-risc`. Project code is not a dependency of the website.
+`plos-risc`. The [Projects page](https://plum-umd.github.io/cmsc818c/projects/)
+contains the student-facing assignments. The website checks allocator examples
+against the same source files using its own toolchain.
 
 | Project | Status | Main ideas |
 | --- | --- | --- |
-| [Allocator](allocator/README.md) | Executable model, checks, and proof exercises | Contracts, finite addresses, freshness, failure, frames |
+| [Allocator](https://plum-umd.github.io/cmsc818c/projects/allocator/) | Executable model, checks, and proof exercises | Contracts, finite addresses, freshness, failure, frames |
 | Queue | Existing [notes and checked examples](../Blog/Examples/); standalone project planned | Representation invariants and refinement |
 | Tiny machine | Planned | Instruction semantics, execution invariants, faults |
 | Tiny compiler | Planned | Simulation and semantic preservation |

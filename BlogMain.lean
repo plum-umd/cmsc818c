@@ -5,6 +5,8 @@ open Verso Genre Blog Site Syntax
 
 def courseSite : Site := site Blog.FrontPage /
   "about" Blog.About
+  "projects" Blog.Projects /
+    "allocator" Blog.Projects.Allocator
   "notes" Blog.Notes with
     Blog.Posts.Background
     Blog.Posts.GettingStarted

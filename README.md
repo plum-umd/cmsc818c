@@ -6,11 +6,11 @@ website, explanatory material, and self-contained preliminary teaching projects.
 
 ## Teaching projects
 
-See [projects/](projects/README.md) for the project roadmap and the
-[allocator project](projects/allocator/README.md) for the first executable model and proof exercises.
+See the [Projects page](https://plum-umd.github.io/cmsc818c/projects/) for assignments and
+[projects/](projects/README.md) for the source roadmap.
 Each project has an independent Lake package and toolchain. Build projects from their own
-directories; website builds do not build the projects. The teaching-project workflow checks
-them separately in CI.
+directories. The website also checks its allocator examples against the same source files;
+the teaching-project workflow checks the standalone package separately in CI.
 
 ## Build and preview
 
@@ -35,6 +35,7 @@ Home is available in the top navigation on every page.
 - `Blog/Notes.lean` is the grouped table of contents, in suggested reading order.
 - `Blog/Posts/` contains individual notes and updates.
 - `Blog/Examples/` contains checked teaching implementations and proofs imported by the posts.
+- `Blog/Projects.lean` and `Blog/Projects/` contain the project index and assignment descriptions.
 - `BlogMain.lean` defines routes, the navigation theme, and the HTML generator.
 
 To add a post, create a file under `Blog/Posts/` following `Welcome.lean`, import it in

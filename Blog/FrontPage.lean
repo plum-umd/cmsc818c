@@ -18,4 +18,5 @@ verified systems, evaluate current tools, and gain hands-on experience specifyin
 and proving correctness properties of systems code.
 
 This site collects course notes and supporting material as they develop.
-Browse the [notes](notes/) or read [about the course](about/).
+Browse the [notes](notes/), work through the [projects](projects/), or read
+[about the course](about/).

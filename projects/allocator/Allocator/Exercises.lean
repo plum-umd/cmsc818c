@@ -13,8 +13,10 @@ def Completeness : Prop :=
   ∀ (heap : Heap) (request : Word) (reply : Reply) (next : Heap),
     Step heap request reply next → allocate heap request = (reply, next)
 
+-- ANCHOR: preservation
 def Preservation : Prop :=
   ∀ (heap : Heap) (request : Word), heap.Valid → (allocate heap request).2.Valid
+-- ANCHOR_END: preservation
 
 def FailureAtomicity : Prop :=
   ∀ (heap : Heap) (request : Word) (reason : Error) (next : Heap),
