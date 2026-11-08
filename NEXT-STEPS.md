@@ -1,108 +1,142 @@
 # Course development: what to work on next
 
-Planning notes, November 7, 2026. These are proposed priorities, not settled course requirements.
+Updated November 8, 2026. These are development priorities, not settled course requirements.
 
 ## Course direction
 
-Follow one system from an abstract specification to executable code, using agents to help
-construct implementations and proofs while keeping the claims independently checkable.
-Use the bounded queue as a compact introduction and PL/OS as the larger destination.
+Explore core verification ideas through small, self-contained projects, then apply those ideas
+inside `plos-risc`. The preliminary implementations need not become PL/OS components; their
+specifications, invariants, refinement arguments, and proof techniques should transfer.
 
-The main pacing risk is spending so long on the verification machinery that students reach
-processes, communication, and isolation too late. Develop a complete path through the queue,
-then revisit its techniques in systems components. Prioritize concrete examples over more titles.
+The preliminary sequence is now developed far enough to transition into PL/OS. Do not add
+another standalone project by default. The pacing risk is requiring so much preliminary work
+that students reach the larger system too late: six complete proof assignments plus their
+extensions could consume substantial course time.
 
-## Where we are
+The earlier plan prioritized a complete list-to-buffer-to-RISC queue development before PL/OS.
+The current sequence broadens that preparation to six projects. A machine-level queue routine
+could still be a useful integration task, but it is no longer a prerequisite for every later topic.
 
-- [Course table of contents](Blog/Notes.lean): grouped reading order, with unfinished posts marked.
-- Six developed lessons: specifications, operational semantics, invariants and induction,
-  executable specifications, representation invariants, and refinement and simulation.
-- [Abstract queue model](Blog/Examples/Queue.lean): transition rules, executable list model,
-  preservation, reachability, determinism, and semantic agreement proofs.
-- [Circular buffer](Blog/Examples/CircularBuffer.lean): initialization, invariant preservation,
-  operation-level simulation, and agreement of complete finite command sequences.
-- [Concrete checks](Blog/Examples/CircularBufferChecks.lean): wraparound, capacity one,
-  duplicate values, stored zero, and full and empty cases.
-- The RISC implementation and its machine-level proofs remain future work.
-- The larger course project starts in `../plos-risc/`.
+## Work completed
 
-## First decisions
+- [x] Organize the [course notes](Blog/Notes.lean) into a suggested reading order and mark stubs.
+- [x] Develop lessons on specifications, operational semantics, invariants, executable
+  specifications, representation invariants, and refinement and simulation.
+- [x] Provide an abstract queue model, executable circular buffer, regression examples,
+  and worked buffer-to-list and finite-trace proofs.
+- [x] Establish a modest teaching machine: 64-bit words, registers, signed immediates,
+  arithmetic, branches, explicit faults, and fuel-bounded execution over decoded instructions.
+- [x] Add a [Projects section](Blog/Projects.lean) with six student-facing Verso assignments,
+  anchored source excerpts, and checked examples.
+- [x] Organize independently buildable project packages under [projects/](projects/README.md),
+  with regression checks, assumption-audit entry points, and CI configuration.
+- [x] State milestones, assumptions, proof obligations, and expectations for students'
+  explanations and use of agents. Separate optional extensions where appropriate.
+- [x] Reuse supplied machine definitions through local dependencies when projects need them,
+  rather than duplicating the machine model or requiring earlier student solutions.
 
-- [ ] Choose the initial RISC architecture, supported instruction subset, and execution environment.
-  Record the machine semantics, memory model, calling convention, and intended relationship
-  between modeled instructions and executable artifacts. Keep the initial scope modest.
-- [ ] Define the minimum capstone. A candidate is one PL/OS component with a proved machine-level
-  contract connected to its abstract interface. Treat a complete OS as an ambitious extension.
-- [ ] Define what students must demonstrate themselves: understanding the specification,
-  invariant, proof structure, assumptions, and agent-generated changes.
-- [ ] Allocate time so the sequential warm-up leaves substantial room for concurrency and OS work.
+### The preliminary projects
 
-## Next implementation and writing sequence
+| Project | Main teaching idea |
+| --- | --- |
+| [Allocator](Blog/Projects/Allocator.lean) | Contracts; direct preservation versus specification preservation and conformance |
+| [Queue](Blog/Projects/Queue.lean) | Representation invariants, relational simulation, and trace composition |
+| [Machine](Blog/Projects/Machine.lean) | Instruction semantics, faults, finite arithmetic, loop invariants, and termination |
+| [Compiler](Blog/Projects/Compiler.lean) | Source semantics, register correspondence, branch layout, and compositional translation |
+| [Protection](Blog/Projects/Protection.lean) | Whole-access authorization, byte frames, failure atomicity, and trace isolation |
+| [Scheduler](Blog/Projects/Scheduler.lean) | Live versus parked contexts, active domains, lifecycle invariants, and simulation |
 
-1. **Finite arithmetic.** Relate natural-number indices and counts to machine words. Establish
-   capacity and address bounds, and handle overflow in circular-buffer index calculations.
-2. **Machine execution in Lean.** Define or adopt the selected instruction semantics and run
-   small instruction sequences. Explain registers, memory, faults, and execution traces.
-3. **One verified RISC queue routine.** Implement a queue operation and prove its entry/exit
-   contract, termination, valid memory accesses, and preservation of required registers and memory.
-4. **Compose the proofs.** Connect machine state to the circular buffer, then reuse the existing
-   buffer-to-list refinement. State the resulting guarantee and remaining trusted assumptions.
-5. **A small rendezvous example.** Introduce processes, blocking, and synchronous communication
-   without immediately taking on the whole PL/OS implementation. Use it to expose the new
-   obligations introduced by concurrency.
+These are assignment descriptions and checked starter artifacts. Most exercise propositions
+are deliberately unproved. Successful builds check the supplied code, examples, and baseline
+lemmas; they do not establish that the student obligations have been completed.
 
-Done for this phase means students can inspect a complete path from an abstract queue rule
-to a checked claim about the instructions implementing it.
+The queue definitions now live in `projects/queue/Queue/`. Worked circular-buffer proofs remain
+in `Blog/Examples/CircularBuffer.lean`, with regression examples in
+`Blog/Examples/CircularBufferChecks.lean`.
 
-## Topics to strengthen with concrete examples
+## Immediate priority: transition into PL/OS
 
-### Ownership and memory reasoning
+- [ ] Define the minimum capstone: one bounded, reviewable contribution to `plos-risc`, with
+  an explicit specification, implementation, tests, proofs, and statement of assumptions.
+  A complete operating system is not the minimum deliverable.
+- [ ] Choose one existing operation for a guided entry assignment. Trace it through its
+  specification, implementation, representation, and correctness theorem.
+- [ ] Ask students to audit that operation's guarantees: failure behavior, preserved state,
+  assumptions, and the connection to executable code.
+- [ ] Select a small modification or additional operation. Identify the proofs it should
+  reuse, the claims it changes, and the new obligations it introduces.
+- [ ] Explain how the resulting guarantee composes with the rest of the system.
 
-- [ ] Describe allocated regions, disjointness, aliasing, and preservation of unrelated state.
-- [ ] Introduce separation-logic ideas where useful; choose a framework only if it helps the work.
-- [ ] Connect these ideas to the existing post on frame properties.
+Message passing, blocking, cancellation, and richer scheduling should now be developed in
+PL/OS where practical, rather than automatically becoming more preliminary toy projects.
+A focused explanatory model may still be useful when a particular concept needs it.
 
-### Concurrency and interference
+## Validate the teaching workload
 
-- [ ] Show exactly where the sequential queue proof relies on exclusive access.
-- [ ] Give an execution where another process or interrupt handler invalidates that reasoning.
-- [ ] Explain the mechanism and contract needed to restore correctness.
+- [ ] Decide which preliminary projects are required submissions, guided exercises, or
+  reference material. Do not assume every student must finish all extensions before PL/OS.
+- [ ] Allocate course time so substantial work remains for processes, communication, and
+  integration in the larger system.
+- [ ] Dry-run the assignments and develop instructor reference solutions. Confirm that the
+  stated proof obligations are attainable with the supplied interfaces and support lemmas.
+- [ ] Estimate the effort spent on arithmetic, array lemmas, and proof tooling; provide more
+  support where that effort obscures the intended systems lesson.
+- [ ] Add assessment rubrics. Existing milestones and write-up instructions are not yet a
+  complete grading policy.
+- [ ] Decide how explanations, specification review, tests, proof audits, and implementation
+  variations demonstrate understanding when agents and worked examples are available.
 
-### Progress and resource bounds
+## Remaining writing and examples
 
-- [ ] Distinguish safety, termination, deadlock freedom, starvation freedom, and fairness.
-- [ ] Include a system that preserves its safety invariants but makes no useful progress.
-- [ ] Make resource exhaustion and scheduler assumptions explicit.
+The project pages now introduce many ideas from the old writing plan, but the dedicated
+notes are not all developed. Several remain explicitly marked as stubs.
 
-### The verification boundary
+- [ ] Develop or link the notes on finite arithmetic, machine execution, machine routines,
+  framing, and proof composition using the project examples. Avoid duplicating explanations
+  without a clear role in the reading sequence.
+- [ ] Add a concrete interference example showing where the sequential queue proof's
+  exclusive-access assumption fails and what mechanism restores correctness.
+- [ ] Distinguish safety, termination, deadlock freedom, starvation freedom, and fairness
+  through concrete system behaviors. Cooperative scheduling cannot guarantee cooperation.
+- [ ] Develop proof-engineering examples: strengthen an invariant, factor a theorem, and
+  diagnose implementation bugs, specification bugs, and overstrong claims.
+- [ ] Demonstrate reviewing agent-generated proof repairs while preserving the intended claim.
+- [ ] Develop the blocking and rendezvous material alongside the chosen PL/OS operation.
 
-- [ ] Trace the connection from a Lean theorem to running instructions, including code generation
-  or assembly, calling conventions, the execution platform, and hardware assumptions.
-- [ ] Distinguish properties established in the model from assumptions about the actual platform.
+Separation-logic machinery is still a possible teaching tool, not a prerequisite or a settled
+framework choice. The allocation and protection projects already provide concrete interval,
+framing, and ownership questions against which to evaluate its usefulness.
 
-### Proof engineering and diagnosis
+## Keep the verification boundary explicit
 
-- [ ] Develop worked examples of finding and strengthening an invariant.
-- [ ] Show how to split a correctness theorem into reusable lemmas.
-- [ ] Include failed attempts that expose an implementation bug, a specification bug, or an
-  overstrong theorem, and explain how to distinguish them.
-- [ ] Demonstrate reviewing agent-generated proof repairs without silently changing the claim.
+- [ ] Identify the calling convention, execution environment, and executable artifact needed
+  by the chosen PL/OS contribution.
+- [ ] Trace the connection from the proved model to running instructions, including assembly
+  or code generation and assumptions about the platform and hardware.
+- [ ] Document which parts are proved and which remain trusted at each integration boundary.
 
-## Design an assignment alongside the material
+The teaching machine executes decoded instruction arrays. The compiler targets that model;
+its proof exercises do not by themselves establish correctness of emitted native binaries.
+The protection service assumes a trusted caller identity and a valid host policy. The
+scheduler uses atomic kernel events and selects domain metadata; it does not establish
+hardware trap entry, preemption, or physical enforcement of permissions.
 
-- [ ] Write one assignment with explicit milestones and a rubric before filling every remaining stub.
-- [ ] Include specification review, implementation, tests, proofs, and an explanation of assumptions.
-- [ ] Require students to explain the important claims and decisions, including agent-assisted work.
-- [ ] Use the assignment to identify missing prerequisites and estimate the workload.
+The complete queue-to-RISC routine proof and a connection to physical hardware remain
+unfinished. Decide whether either is necessary for the selected capstone before making it
+mandatory development work.
 
 ## Suggested restart point
 
-Resolve the RISC target and execution environment first. Then develop **Finite Arithmetic**
-against the existing circular buffer and draft the first machine-routine assignment alongside it.
+Inspect `../plos-risc/` and choose the operation for the guided transition assignment.
+Write down its existing contract and proof boundary, then propose one small change with
+clear integration obligations. In parallel, decide how much of the preliminary sequence
+will be required and schedule an instructor dry run of those assignments.
 
-Build and regenerate the site after changes to the Lean examples or posts:
+After changing Lean examples or posts, build and regenerate the website:
 
 ```sh
 lake build
 lake exe generate-blog
 ```
+
+Build each standalone teaching project from its own directory with `lake build`.
