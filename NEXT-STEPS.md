@@ -59,10 +59,15 @@ in `Blog/Examples/CircularBuffer.lean`, with regression examples in
 - [ ] Define the minimum capstone: one bounded, reviewable contribution to `plos-risc`, with
   an explicit specification, implementation, tests, proofs, and statement of assumptions.
   A complete operating system is not the minimum deliverable.
-- [ ] Choose one existing operation for a guided entry assignment. Trace it through its
-  specification, implementation, representation, and correctness theorem.
-- [ ] Ask students to audit that operation's guarantees: failure behavior, preserved state,
-  assumptions, and the connection to executable code.
+- [x] Choose lookup as the guided entry assignment: [Verified RISC Lookup](Blog/Projects/RiscLookup.lean)
+  supplies a pinned PL/OS dependency, independent specification, empty assembly body,
+  executable fixtures, and execution/call correctness obligations.
+- [x] Include an audit of lookup's failure behavior, frame, finite arithmetic, assumptions,
+  and connection from assembly to encoded execution in the assignment.
+- [ ] Dry-run the lookup assignment, including its universal proofs, and tune the supplied
+  support lemmas. A passing starter build does not establish the exercise propositions.
+- [ ] Develop bounded append and persistent handle tables next.
+- [ ] Develop the runnable ring queue and kernel composition assignment.
 - [ ] Select a small modification or additional operation. Identify the proofs it should
   reuse, the claims it changes, and the new obligations it introduces.
 - [ ] Explain how the resulting guarantee composes with the rest of the system.
@@ -121,16 +126,17 @@ The protection service assumes a trusted caller identity and a valid host policy
 scheduler uses atomic kernel events and selects domain metadata; it does not establish
 hardware trap entry, preemption, or physical enforcement of permissions.
 
-The complete queue-to-RISC routine proof and a connection to physical hardware remain
-unfinished. Decide whether either is necessary for the selected capstone before making it
-mandatory development work.
+The PL/OS reference now includes native handle and ring-queue components. Further course
+assignments, instructor proof dry runs, and a connection to physical hardware remain unfinished.
+Decide whether a hardware connection is necessary for the selected capstone before making
+it mandatory development work.
 
 ## Suggested restart point
 
-Inspect `../plos-risc/` and choose the operation for the guided transition assignment.
-Write down its existing contract and proof boundary, then propose one small change with
-clear integration obligations. In parallel, decide how much of the preliminary sequence
-will be required and schedule an instructor dry run of those assignments.
+Dry-run `projects/risc-lookup` and its universal correctness obligations, then develop
+the bounded append and persistent handle-table assignment.
+In parallel, decide how much of the preliminary sequence will be required and schedule
+an instructor dry run of those assignments.
 
 After changing Lean examples or posts, build and regenerate the website:
 

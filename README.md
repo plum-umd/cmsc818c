@@ -2,7 +2,7 @@
 
 Course website and notes for CMSC 818C, written with [Verso](https://github.com/leanprover/verso).
 The main course artifact will live in a separate repository; this repository contains the
-website, explanatory material, and self-contained preliminary teaching projects.
+website, explanatory material, preliminary teaching projects, and PL/OS component assignments.
 
 ## Teaching projects
 

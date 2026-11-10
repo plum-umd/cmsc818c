@@ -2,10 +2,10 @@
 
 These projects explore core ideas on small systems before applying them to PL/OS.
 They live in the course repository for now. Each project is an independent Lake
-package: build it from its own directory, without building the website or cloning
-`plos-risc`. The [Projects page](https://plum-umd.github.io/cmsc818c/projects/)
-contains the student-facing assignments. The website checks project examples
-against the same source files using its own toolchain.
+package: build it from its own directory, without building the website or maintaining
+a sibling `plos-risc` checkout. The [Projects page](https://plum-umd.github.io/cmsc818c/projects/)
+contains the student-facing assignments. The website checks excerpts against the
+actual starter source; the PL/OS assignments use cross-toolchain extraction.
 
 | Project | Status | Main ideas |
 | --- | --- | --- |
@@ -15,6 +15,7 @@ against the same source files using its own toolchain.
 | [Small compiler](https://plum-umd.github.io/cmsc818c/projects/compiler/) | Source semantics, compiler, checks, and proof exercises | State correspondence, code layout, and semantic preservation |
 | [Protected memory](https://plum-umd.github.io/cmsc818c/projects/protection/) | Executable service, access and byte specifications, checks, and proof exercises | Authority, failure atomicity, framing, and trace isolation |
 | [Cooperative scheduler](https://plum-umd.github.io/cmsc818c/projects/scheduler/) | Abstract scheduler, context manager, checks, and proof exercises | Context ownership, lifecycle invariants, simulation, and frames |
+| [RISC lookup](https://plum-umd.github.io/cmsc818c/projects/risc-lookup/) | Assembly starter, contracts, fixtures, and proof exercises | Encoded execution, calling conventions, and read-only refinement |
 
 This is a roadmap, not a fixed assignment schedule. Projects need not implement
 components that will be reused by PL/OS. The proof techniques and explicit
@@ -55,3 +56,13 @@ machine context and protection-domain definitions through local Lake dependencie
 The compiler project uses the machine package through a local Lake dependency.
 It needs the supplied machine definitions, not student solutions to Project 3.
 The compiler and machine share one instruction model rather than maintaining copies.
+
+The RISC lookup project starts the PL/OS component sequence. It pins PL/OS revision
+`06668a4d6bec72a4ccf65dc48093e984d6960ce6` and imports only its machine, assembler,
+code-image, and call infrastructure. It does not import the completed lookup.
+Its source-highlighting dependency is pinned separately for Verso extraction on Lean 4.27.0.
+When maintaining those pins, use `lake --keep-toolchain update` to retain the assignment's
+toolchain; SubVerso's own default toolchain can be newer than the versions it supports.
+Run `lake build` in `projects/risc-lookup` for the starter checks. After implementing the
+routine, run `lake exe check-lookup`; this second command intentionally fails on the
+empty starter. The universal exercise propositions remain student obligations.

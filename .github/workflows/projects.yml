@@ -15,7 +15,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: [allocator, queue, machine, compiler, protection, scheduler]
+        project:
+          - allocator
+          - queue
+          - machine
+          - compiler
+          - protection
+          - scheduler
+          - risc-lookup
     steps:
       - uses: actions/checkout@v6
       - name: Build project and regression checks

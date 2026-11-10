@@ -20,3 +20,8 @@ precise contracts, and proofs, with agents assisting in implementation and proof
    failure atomicity, byte frames, and isolation across command sequences.
 1. [A Cooperative Scheduler](projects/scheduler/): context ownership, live and saved state,
    scheduling invariants, and simulation across context switches.
+
+We then apply these ideas to components in PL/OS:
+
+7. [Verified RISC Lookup](projects/risc-lookup/): assembly, encoded execution, table
+   representations, calling conventions, and read-only refinement.
