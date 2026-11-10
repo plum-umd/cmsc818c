@@ -52,6 +52,11 @@ def courseSite : Site := site Blog.FrontPage /
     Blog.Posts.MaintainingProofs
     Blog.Posts.Welcome
 
+def accessibilityFooter : Verso.Output.Html :=
+  .tag "footer" #[("style", "margin-top: 2rem; padding-top: 1rem; font-size: 0.875em;")]
+    (.tag "a" #[("href", "https://www.umd.edu/web-accessibility")]
+      (.text true "Web Accessibility"))
+
 def courseTheme : Theme :=
   { Theme.default with
     primaryTemplate := do
@@ -61,12 +66,16 @@ def courseTheme : Theme :=
           { ctx with params := ctx.params.erase "posts" }
         else ctx) Theme.Default.primary
       let navigation ← Theme.topNav (some "Home")
-      pure <| page.visitM (m := Id) (tag := fun tag attrs _ =>
+      pure <| page.visitM (m := Id) (tag := fun tag attrs contents =>
         pure <| if tag == "div" &&
             (attrs.contains ("class", "authors") || attrs.contains ("class", "date")) then
           some .empty
         else if tag == "nav" && attrs.contains ("class", "top") then
           some navigation
+        else if tag == "body" then
+          some (.tag tag attrs (contents ++ accessibilityFooter))
+        else if tag == "html" then
+          some (.tag tag (attrs.filter (·.1 != "lang") |>.push ("lang", "en")) contents)
         else none) }
 
 def main := blogMain courseTheme courseSite
