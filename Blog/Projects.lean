@@ -27,3 +27,5 @@ We then apply these ideas to components in PL/OS:
    representations, calling conventions, and read-only refinement.
 8. [Persistent RISC Handle Tables](projects/risc-handles/): bounded append, exact byte
    effects, preservation of executable code, and persistent component invariants.
+9. [A Runnable RISC Queue](projects/risc-queue/): encoded dequeue, circular storage,
+   reuse of verified writes, persistent FIFO refinement, and the kernel queue contract.

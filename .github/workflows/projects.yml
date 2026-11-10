@@ -24,6 +24,7 @@ jobs:
           - scheduler
           - risc-lookup
           - risc-handles
+          - risc-queue
     steps:
       - uses: actions/checkout@v6
       - name: Build project and regression checks

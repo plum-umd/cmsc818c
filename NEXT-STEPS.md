@@ -70,7 +70,13 @@ in `Blog/Examples/CircularBuffer.lean`, with regression examples in
   with an independent build, supplied lookup, verified parameterized loader, and obligations
   for byte frames, code preservation, persistence, and append/lookup composition.
 - [ ] Dry-run the handles assignment's universal proofs and tune its scaffolding.
-- [ ] Develop the runnable ring queue and kernel composition assignment.
+- [x] Develop [the runnable RISC queue](Blog/Projects/RiscQueue.lean), with student dequeue
+  and ring adapters, a supplied verified writer and host policy, and obligations for the
+  logical FIFO, native execution paths, and an actual kernel queue contract.
+- [ ] Dry-run the queue assignment's universal proofs, including construction of its
+  `CorrectRing` bundle; conditional policy theorems alone do not complete the assignment.
+- [ ] Instantiate whole-kernel storage replacement with the course queue contract if it
+  becomes a required capstone milestone. It is currently an optional project extension.
 - [ ] Select a small modification or additional operation. Identify the proofs it should
   reuse, the claims it changes, and the new obligations it introduces.
 - [ ] Explain how the resulting guarantee composes with the rest of the system.
@@ -129,15 +135,15 @@ The protection service assumes a trusted caller identity and a valid host policy
 scheduler uses atomic kernel events and selects domain metadata; it does not establish
 hardware trap entry, preemption, or physical enforcement of permissions.
 
-The PL/OS reference now includes native handle and ring-queue components. Further course
-assignments, instructor proof dry runs, and a connection to physical hardware remain unfinished.
+The PL/OS reference now includes native handle and ring-queue components, and their course
+starters are developed. Instructor proof dry runs and a connection to physical hardware remain unfinished.
 Decide whether a hardware connection is necessary for the selected capstone before making
 it mandatory development work.
 
 ## Suggested restart point
 
-Dry-run `projects/risc-lookup` and `projects/risc-handles`, including their universal
-correctness obligations, then develop the runnable ring-queue assignment.
+Dry-run `projects/risc-lookup`, `projects/risc-handles`, and `projects/risc-queue`, including
+their universal correctness obligations. Choose a whole-kernel integration milestone next.
 In parallel, decide how much of the preliminary sequence will be required and schedule
 an instructor dry run of those assignments.
 

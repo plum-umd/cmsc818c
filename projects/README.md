@@ -17,6 +17,7 @@ actual starter source; the PL/OS assignments use cross-toolchain extraction.
 | [Cooperative scheduler](https://plum-umd.github.io/cmsc818c/projects/scheduler/) | Abstract scheduler, context manager, checks, and proof exercises | Context ownership, lifecycle invariants, simulation, and frames |
 | [RISC lookup](https://plum-umd.github.io/cmsc818c/projects/risc-lookup/) | Assembly starter, contracts, fixtures, and proof exercises | Encoded execution, calling conventions, and read-only refinement |
 | [RISC handles](https://plum-umd.github.io/cmsc818c/projects/risc-handles/) | Append and persistent-adapter starters, verified loader, checks, and proof exercises | Exact writes, code frames, persistence, and component composition |
+| [RISC queue](https://plum-umd.github.io/cmsc818c/projects/risc-queue/) | Dequeue and ring-adapter starters, supplied writer and host policy, checks, and proof exercises | Circular storage, native execution, FIFO refinement, and the kernel queue contract |
 
 This is a roadmap, not a fixed assignment schedule. Projects need not implement
 components that will be reused by PL/OS. The proof techniques and explicit
@@ -72,3 +73,10 @@ The handles project uses the same pins and supplies the upstream lookup solution
 does not import upstream append or native handles. Its generic loader admits the student's
 append code. Run the starter build in `projects/risc-handles`, then run
 `lake exe check-handles` after implementing both the routine and persistent adapter.
+
+The queue project supplies upstream append and a verified physical-cell writer. Students
+implement dequeue and ring adapters, construct a `CorrectRing` proof bundle, and prove that
+the supplied host policy satisfies `Kernel.Components.QueueContract`. It does not import
+upstream dequeue, ring views, native rings, or native queue policy. Use `projects/risc-queue`
+for the starter build and `lake exe check-queue` for candidate checks after implementation.
+Policy checks run from the solution module with the student's completed proof bundle.

@@ -14,6 +14,7 @@ def courseSite : Site := site Blog.FrontPage /
     "scheduler" Blog.Projects.Scheduler
     "risc-lookup" Blog.Projects.RiscLookup
     "risc-handles" Blog.Projects.RiscHandles
+    "risc-queue" Blog.Projects.RiscQueue
   "notes" Blog.Notes with
     Blog.Posts.Background
     Blog.Posts.GettingStarted
