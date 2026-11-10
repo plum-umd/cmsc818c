@@ -16,6 +16,7 @@ actual starter source; the PL/OS assignments use cross-toolchain extraction.
 | [Protected memory](https://plum-umd.github.io/cmsc818c/projects/protection/) | Executable service, access and byte specifications, checks, and proof exercises | Authority, failure atomicity, framing, and trace isolation |
 | [Cooperative scheduler](https://plum-umd.github.io/cmsc818c/projects/scheduler/) | Abstract scheduler, context manager, checks, and proof exercises | Context ownership, lifecycle invariants, simulation, and frames |
 | [RISC lookup](https://plum-umd.github.io/cmsc818c/projects/risc-lookup/) | Assembly starter, contracts, fixtures, and proof exercises | Encoded execution, calling conventions, and read-only refinement |
+| [RISC handles](https://plum-umd.github.io/cmsc818c/projects/risc-handles/) | Append and persistent-adapter starters, verified loader, checks, and proof exercises | Exact writes, code frames, persistence, and component composition |
 
 This is a roadmap, not a fixed assignment schedule. Projects need not implement
 components that will be reused by PL/OS. The proof techniques and explicit
@@ -66,3 +67,8 @@ toolchain; SubVerso's own default toolchain can be newer than the versions it su
 Run `lake build` in `projects/risc-lookup` for the starter checks. After implementing the
 routine, run `lake exe check-lookup`; this second command intentionally fails on the
 empty starter. The universal exercise propositions remain student obligations.
+
+The handles project uses the same pins and supplies the upstream lookup solution, but
+does not import upstream append or native handles. Its generic loader admits the student's
+append code. Run the starter build in `projects/risc-handles`, then run
+`lake exe check-handles` after implementing both the routine and persistent adapter.

@@ -23,6 +23,7 @@ jobs:
           - protection
           - scheduler
           - risc-lookup
+          - risc-handles
     steps:
       - uses: actions/checkout@v6
       - name: Build project and regression checks

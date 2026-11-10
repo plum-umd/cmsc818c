@@ -66,7 +66,10 @@ in `Blog/Examples/CircularBuffer.lean`, with regression examples in
   and connection from assembly to encoded execution in the assignment.
 - [ ] Dry-run the lookup assignment, including its universal proofs, and tune the supplied
   support lemmas. A passing starter build does not establish the exercise propositions.
-- [ ] Develop bounded append and persistent handle tables next.
+- [x] Develop [bounded append and persistent handles](Blog/Projects/RiscHandles.lean),
+  with an independent build, supplied lookup, verified parameterized loader, and obligations
+  for byte frames, code preservation, persistence, and append/lookup composition.
+- [ ] Dry-run the handles assignment's universal proofs and tune its scaffolding.
 - [ ] Develop the runnable ring queue and kernel composition assignment.
 - [ ] Select a small modification or additional operation. Identify the proofs it should
   reuse, the claims it changes, and the new obligations it introduces.
@@ -133,8 +136,8 @@ it mandatory development work.
 
 ## Suggested restart point
 
-Dry-run `projects/risc-lookup` and its universal correctness obligations, then develop
-the bounded append and persistent handle-table assignment.
+Dry-run `projects/risc-lookup` and `projects/risc-handles`, including their universal
+correctness obligations, then develop the runnable ring-queue assignment.
 In parallel, decide how much of the preliminary sequence will be required and schedule
 an instructor dry run of those assignments.
 

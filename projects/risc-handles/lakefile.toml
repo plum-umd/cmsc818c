@@ -1,0 +1,24 @@
+name = "course-risc-handles"
+version = "0.1.0"
+defaultTargets = ["RiscHandles", "Checks"]
+
+[[require]]
+name = "plos"
+git = "https://github.com/plum-umd/plos-risc.git"
+rev = "06668a4d6bec72a4ccf65dc48093e984d6960ce6"
+
+# Used by the course website to extract checked source excerpts across Lean versions.
+[[require]]
+name = "subverso"
+git = "https://github.com/leanprover/subverso.git"
+rev = "892d6dc520270b5fb8c1291dd1b131e8c16255ed"
+
+[[lean_lib]]
+name = "RiscHandles"
+
+[[lean_lib]]
+name = "Checks"
+
+[[lean_exe]]
+name = "check-handles"
+root = "CheckMain"

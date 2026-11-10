@@ -13,6 +13,7 @@ def courseSite : Site := site Blog.FrontPage /
     "protection" Blog.Projects.Protection
     "scheduler" Blog.Projects.Scheduler
     "risc-lookup" Blog.Projects.RiscLookup
+    "risc-handles" Blog.Projects.RiscHandles
   "notes" Blog.Notes with
     Blog.Posts.Background
     Blog.Posts.GettingStarted

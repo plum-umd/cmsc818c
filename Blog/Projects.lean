@@ -25,3 +25,5 @@ We then apply these ideas to components in PL/OS:
 
 7. [Verified RISC Lookup](projects/risc-lookup/): assembly, encoded execution, table
    representations, calling conventions, and read-only refinement.
+8. [Persistent RISC Handle Tables](projects/risc-handles/): bounded append, exact byte
+   effects, preservation of executable code, and persistent component invariants.
