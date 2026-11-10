@@ -2,6 +2,10 @@
 
 Updated November 8, 2026. These are development priorities, not settled course requirements.
 
+For follow-on project ideas from the November 10 PL/OS review, see
+[Possible follow on projects in PL/OS](RISC-PROJECT-IDEAS.md). Revisit that note after
+further upstream development before selecting additional assignments.
+
 ## Course direction
 
 Explore core verification ideas through small, self-contained projects, then apply those ideas
