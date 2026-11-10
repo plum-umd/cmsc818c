@@ -49,8 +49,9 @@ Give each post a title, author, and date. Verso uses Markdown-like syntax inside
 After editing, rerun `lake exe generate-blog` and refresh the browser. No commit or push is
 needed for local previews.
 
-When the main artifact repository is available, add its link to `Blog/FrontPage.lean` and
-`Blog/About.lean`. It is deliberately not a build dependency of this website.
+The RISC assignments depend on the private `plum-umd/plos-risc` repository at a pinned
+commit. Local builds of those assignments and the full website require Git read access
+to that repository. The six preliminary projects build independently of it.
 
 ## GitHub Pages
 
@@ -58,6 +59,22 @@ In the repository's **Settings → Pages → Build and deployment**, select **Gi
 as the source. Push these files to `main` to build and publish the site. Subsequent pushes
 to `main` publish automatically; pull requests build the site without deploying it.
 The workflow also supports manual runs from the Actions tab.
+
+The Pages build and RISC-project checks use the repository Actions secret
+`PLOS_RISC_READ_TOKEN`: a fine-grained token owned by `plum-umd`, restricted to
+`plos-risc` with **Contents: read-only**. Renew the token before its expiration and update
+the secret under **Settings → Secrets and variables → Actions**.
+
+The shared `.github/actions/plos-dependency` action validates the three project pins,
+checks out that exact private commit with credential persistence disabled, and redirects
+Lake's PL/OS Git clones to the local checkout. Credentials are not retained in the checkout
+or passed to the Lean build. Private builds disable Actions caching and publish only the generated
+website artifact. No dependency source is vendored into this repository.
+
+Fork pull requests run the six public project checks; the website and RISC jobs skip
+because fork workflows have no access to the private dependency secret. Pushes and
+same-repository pull requests run the full checks. Keep these as `pull_request` workflows,
+not `pull_request_target` workflows that execute fork code with repository secrets.
 
 The expected site URL is <https://plum-umd.github.io/cmsc818c/>.
 

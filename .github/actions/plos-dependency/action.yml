@@ -1,0 +1,35 @@
+name: Prepare private PL/OS dependency
+description: Fetch the pinned PL/OS source and let Lake clone it without retained credentials.
+inputs:
+  token:
+    description: Read-only Contents token for plum-umd/plos-risc.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Check private dependency credential
+      shell: bash
+      env:
+        PLOS_RISC_READ_TOKEN: ${{ inputs.token }}
+      run: |
+        if [[ -z "$PLOS_RISC_READ_TOKEN" ]]; then
+          echo "::error::Set the PLOS_RISC_READ_TOKEN Actions secret with Contents read access to plum-umd/plos-risc."
+          exit 1
+        fi
+    - name: Read and validate the project pins
+      id: pin
+      shell: bash
+      run: python3 "$GITHUB_ACTION_PATH/revision.py" >> "$GITHUB_OUTPUT"
+    - name: Fetch the private dependency
+      uses: actions/checkout@v6
+      with:
+        repository: plum-umd/plos-risc
+        ref: ${{ steps.pin.outputs.revision }}
+        token: ${{ inputs.token }}
+        persist-credentials: false
+        path: .ci-deps/plos-risc
+    - name: Use the local checkout for Lake clones
+      shell: bash
+      run: |
+        mirror_url="file://${GITHUB_WORKSPACE}/.ci-deps/plos-risc"
+        git config --global "url.${mirror_url}.insteadOf" https://github.com/plum-umd/plos-risc.git

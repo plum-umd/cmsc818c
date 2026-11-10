@@ -15,9 +15,17 @@ concurrency:
 
 jobs:
   build:
+    # Fork PRs cannot access the private dependency secret.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Prepare private PL/OS dependency
+        uses: ./.github/actions/plos-dependency
+        with:
+          token: ${{ secrets.PLOS_RISC_READ_TOKEN }}
       - name: Install Lean and build
         uses: leanprover/lean-action@v1
         with:
@@ -26,6 +34,8 @@ jobs:
           test: false
           lint: false
           use-mathlib-cache: false
+          # Private dependency sources must not enter public Actions caches.
+          use-github-cache: false
       - name: Generate HTML
         run: lake exe generate-blog
       - name: Check site entry point

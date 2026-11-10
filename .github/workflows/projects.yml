@@ -22,11 +22,10 @@ jobs:
           - compiler
           - protection
           - scheduler
-          - risc-lookup
-          - risc-handles
-          - risc-queue
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Build project and regression checks
         uses: leanprover/lean-action@v1
         with:
@@ -36,6 +35,36 @@ jobs:
           test: false
           lint: false
           use-mathlib-cache: false
+      - name: Report supplied theorem assumptions
+        working-directory: projects/${{ matrix.project }}
+        run: lake env lean Audit.lean
+
+  risc-project:
+    # Keep the public preliminary-project checks available on fork PRs.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [risc-lookup, risc-handles, risc-queue]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Prepare private PL/OS dependency
+        uses: ./.github/actions/plos-dependency
+        with:
+          token: ${{ secrets.PLOS_RISC_READ_TOKEN }}
+      - name: Build project and regression checks
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: projects/${{ matrix.project }}
+          auto-config: false
+          build: true
+          test: false
+          lint: false
+          use-mathlib-cache: false
+          use-github-cache: false
       - name: Report supplied theorem assumptions
         working-directory: projects/${{ matrix.project }}
         run: lake env lean Audit.lean
